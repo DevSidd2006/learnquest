@@ -28,8 +28,8 @@ Make it engaging and appropriate for the difficulty level.`;
 
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
-    systemInstruction: { role: "system", parts: [{ text: systemPrompt }] },
-    generationConfig: {
+    config: {
+      systemInstruction: systemPrompt,
       responseMimeType: "application/json",
       responseSchema: {
         type: "object",
@@ -55,10 +55,10 @@ Make it engaging and appropriate for the difficulty level.`;
         required: ["topic", "estimatedTime", "difficulty", "subtopics"],
       },
     },
-    contents: [{ role: "user", parts: [{ text: prompt }] }],
+    contents: prompt,
   });
 
-  const rawJson = response.response?.text();
+  const rawJson = response.text;
   if (!rawJson) {
     throw new Error("Empty response from Gemini");
   }
@@ -89,8 +89,8 @@ For each question, provide:
 
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
-    systemInstruction: { role: "system", parts: [{ text: systemPrompt }] },
-    generationConfig: {
+    config: {
+      systemInstruction: systemPrompt,
       responseMimeType: "application/json",
       responseSchema: {
         type: "object",
@@ -115,10 +115,10 @@ For each question, provide:
         required: ["questions"],
       },
     },
-    contents: [{ role: "user", parts: [{ text: prompt }] }],
+    contents: prompt,
   });
 
-  const rawJson = response.response?.text();
+  const rawJson = response.text;
   if (!rawJson) {
     throw new Error("Empty response from Gemini");
   }
@@ -147,8 +147,8 @@ For each flashcard:
 
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
-    systemInstruction: { role: "system", parts: [{ text: systemPrompt }] },
-    generationConfig: {
+    config: {
+      systemInstruction: systemPrompt,
       responseMimeType: "application/json",
       responseSchema: {
         type: "object",
@@ -171,10 +171,10 @@ For each flashcard:
         required: ["flashcards"],
       },
     },
-    contents: [{ role: "user", parts: [{ text: prompt }] }],
+    contents: prompt,
   });
 
-  const rawJson = response.response?.text();
+  const rawJson = response.text;
   if (!rawJson) {
     throw new Error("Empty response from Gemini");
   }
@@ -203,8 +203,8 @@ Provide:
 
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
-    systemInstruction: { role: "system", parts: [{ text: systemPrompt }] },
-    generationConfig: {
+    config: {
+      systemInstruction: systemPrompt,
       responseMimeType: "application/json",
       responseSchema: {
         type: "object",
@@ -219,10 +219,10 @@ Provide:
         required: ["concept", "simpleExplanation", "analogy", "realLifeExamples", "keyTakeaways"],
       },
     },
-    contents: [{ role: "user", parts: [{ text: prompt }] }],
+    contents: prompt,
   });
 
-  const rawJson = response.response?.text();
+  const rawJson = response.text;
   if (!rawJson) {
     throw new Error("Empty response from Gemini");
   }
