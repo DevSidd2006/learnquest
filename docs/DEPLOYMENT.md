@@ -47,6 +47,8 @@ The `vercel.json` file has been created with the optimal configuration for your 
    - Build Command: `npm run vercel-build`
    - Output Directory: `client/dist`
    - Install Command: `npm install`
+   
+   *Note: These settings are also configured in `vercel.json` for automatic detection.*
 
 ### Option B: Deploy via Vercel CLI
 
