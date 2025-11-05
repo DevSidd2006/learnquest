@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import type { TopicOutline, QuizQuestion, Flashcard, Explanation } from "@shared/schema";
+import type { TopicOutline, QuizQuestion, Flashcard, Explanation } from "../../database/schema";
 
 // DON'T DELETE THIS COMMENT
 // Follow these instructions when using this blueprint:
@@ -7,7 +7,13 @@ import type { TopicOutline, QuizQuestion, Flashcard, Explanation } from "@shared
 //   - do not change this unless explicitly requested by the user
 
 // This API key is from Gemini Developer API Key, not vertex AI API Key
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+const apiKey = process.env.GEMINI_API_KEY;
+if (!apiKey) {
+  console.error("GEMINI_API_KEY environment variable is not set");
+  throw new Error("Gemini API key is required");
+}
+
+const ai = new GoogleGenAI({ apiKey });
 
 export async function generateTopicOutline(
   topic: string,
@@ -74,14 +80,14 @@ export async function generateQuizQuestions(
 ): Promise<QuizQuestion[]> {
   const systemPrompt = `You are an expert quiz creator. Generate engaging, educational quiz questions that test understanding.
 Create questions with real-life examples and clear explanations.
-Mix question types: multiple-choice, true-false, and fill-in-the-blank.`;
+Mix question types: multiple-choice and true-false only.`;
 
   const prompt = `Create 5 quiz questions about "${subtopic}" within the broader topic of "${topic}".
 Difficulty level: ${difficulty}
 
 For each question, provide:
 - The question text
-- Question type (multiple-choice, true-false, or fill-blank)
+- Question type (multiple-choice or true-false)
 - Options (for multiple choice, provide 4 options)
 - The correct answer
 - A clear explanation of why it's correct
@@ -101,7 +107,7 @@ For each question, provide:
               type: "object",
               properties: {
                 id: { type: "string" },
-                type: { type: "string", enum: ["multiple-choice", "true-false", "fill-blank"] },
+                type: { type: "string", enum: ["multiple-choice", "true-false"] },
                 question: { type: "string" },
                 options: { type: "array", items: { type: "string" } },
                 correctAnswer: { type: "string" },

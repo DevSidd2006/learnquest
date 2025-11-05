@@ -36,7 +36,8 @@ export default function Flashcards() {
 
   const completeFlashcardsMutation = useMutation({
     mutationFn: async (data: { sessionId: string; subtopicId: string }) => {
-      return await apiRequest("POST", "/api/flashcards/complete", data);
+      const response = await apiRequest("POST", "/api/flashcards/complete", data);
+      return await response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/sessions", sessionId] });

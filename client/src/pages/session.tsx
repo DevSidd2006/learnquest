@@ -177,12 +177,21 @@ export default function Session() {
                           {isCurrent && (
                             <div className="flex flex-wrap gap-2 pt-2">
                               <Button
+                                onClick={() => navigate(`/concept/${sessionId}/${subtopic.id}`)}
+                                className="gap-2"
+                                data-testid={`button-learn-concept-${subtopic.id}`}
+                              >
+                                <BookOpen className="h-4 w-4" />
+                                Learn Concept
+                              </Button>
+                              <Button
+                                variant="outline"
                                 onClick={() => navigate(`/quiz/${sessionId}/${subtopic.id}`)}
                                 className="gap-2"
                                 data-testid={`button-start-quiz-${subtopic.id}`}
                               >
                                 <Zap className="h-4 w-4" />
-                                Start Quiz
+                                Take Quiz
                               </Button>
                               <Button
                                 variant="outline"
@@ -190,8 +199,8 @@ export default function Session() {
                                 className="gap-2"
                                 data-testid={`button-start-flashcards-${subtopic.id}`}
                               >
-                                <BookOpen className="h-4 w-4" />
-                                Study Flashcards
+                                <Target className="h-4 w-4" />
+                                Flashcards
                               </Button>
                             </div>
                           )}

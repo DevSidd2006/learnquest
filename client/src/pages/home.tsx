@@ -80,10 +80,10 @@ export default function Home() {
                 Start Learning
               </Button>
             </Link>
-            <Link href="/dashboard">
-              <Button size="lg" variant="outline" className="gap-2 min-h-12 px-8 text-base" data-testid="button-view-progress">
+            <Link href="/login">
+              <Button size="lg" variant="outline" className="gap-2 min-h-12 px-8 text-base" data-testid="button-login">
                 <TrendingUp className="h-5 w-5" />
-                View Progress
+                Sign In / Sign Up
               </Button>
             </Link>
           </div>
@@ -156,7 +156,7 @@ export default function Home() {
                 </div>
                 <CardTitle className="text-xl">Interactive Quizzes</CardTitle>
                 <CardDescription>
-                  Test your knowledge with multiple choice, true/false, and fill-in-the-blank questions
+                  Test your knowledge with multiple choice and true/false questions
                 </CardDescription>
               </CardHeader>
             </Card>

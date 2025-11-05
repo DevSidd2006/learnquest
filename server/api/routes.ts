@@ -1,12 +1,14 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { storage } from "../services/storage";
 import { 
   generateTopicOutline, 
   generateQuizQuestions, 
   generateFlashcards,
   generateExplanation 
-} from "./gemini";
+} from "../services/gemini";
+import { registerAuthRoutes } from "./auth-routes";
+import { getCurrentUser } from "../middleware/auth";
 import { z } from "zod";
 
 // Validation schemas
@@ -34,8 +36,10 @@ const explanationSchema = z.object({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Register authentication routes
+  registerAuthRoutes(app);
   // Create Learning Session
-  app.post("/api/sessions", async (req, res) => {
+  app.post("/api/sessions", getCurrentUser, async (req, res) => {
     try {
       const validationResult = createSessionSchema.safeParse(req.body);
       
@@ -56,7 +60,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         outline: JSON.stringify(outline),
         currentStep: 0,
         completed: false,
-      });
+      }, req.user?.id);
 
       res.json(session);
     } catch (error) {

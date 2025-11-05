@@ -28,7 +28,8 @@ export default function CreateTopic() {
 
   const createSessionMutation = useMutation({
     mutationFn: async (data: { topic: string; difficulty: string; learningStyle: string }) => {
-      return await apiRequest("POST", "/api/sessions", data);
+      const response = await apiRequest("POST", "/api/sessions", data);
+      return await response.json();
     },
     onSuccess: (data: any) => {
       toast({

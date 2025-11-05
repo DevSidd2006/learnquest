@@ -5,8 +5,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
 import Home from "@/pages/home";
+import Login from "@/pages/login";
 import CreateTopic from "@/pages/create-topic";
 import Session from "@/pages/session";
+import Concept from "@/pages/concept";
 import Quiz from "@/pages/quiz";
 import Flashcards from "@/pages/flashcards";
 import Dashboard from "@/pages/dashboard";
@@ -16,8 +18,10 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/login" component={Login} />
       <Route path="/create" component={CreateTopic} />
       <Route path="/session/:id" component={Session} />
+      <Route path="/concept/:sessionId/:subtopicId" component={Concept} />
       <Route path="/quiz/:sessionId/:subtopicId" component={Quiz} />
       <Route path="/flashcards/:sessionId/:subtopicId" component={Flashcards} />
       <Route path="/dashboard" component={Dashboard} />

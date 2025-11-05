@@ -7,32 +7,32 @@ import {
   type InsertFlashcardSet,
   type UserProgress,
   type InsertUserProgress
-} from "@shared/schema";
+} from "../../database/schema";
 import { randomUUID } from "crypto";
 
 export interface IStorage {
   // Learning Sessions
-  createSession(session: InsertLearningSession): Promise<LearningSession>;
+  createSession(session: InsertLearningSession, userId?: string): Promise<LearningSession>;
   getSession(id: string): Promise<LearningSession | undefined>;
-  getAllSessions(): Promise<LearningSession[]>;
+  getAllSessions(userId?: string): Promise<LearningSession[]>;
   updateSessionProgress(id: string, currentStep: number): Promise<void>;
   completeSession(id: string): Promise<void>;
 
   // Quizzes
-  createQuiz(quiz: InsertQuiz): Promise<Quiz>;
+  createQuiz(quiz: InsertQuiz, userId?: string): Promise<Quiz>;
   getQuiz(sessionId: string, subtopic: string): Promise<Quiz | undefined>;
   updateQuizScore(id: string, score: number): Promise<void>;
 
   // Flashcard Sets
-  createFlashcardSet(set: InsertFlashcardSet): Promise<FlashcardSet>;
+  createFlashcardSet(set: InsertFlashcardSet, userId?: string): Promise<FlashcardSet>;
   getFlashcardSet(sessionId: string, subtopic: string): Promise<FlashcardSet | undefined>;
   updateFlashcardProgress(id: string, reviewedCount: number): Promise<void>;
 
   // User Progress
-  getProgress(): Promise<UserProgress>;
-  updateProgress(updates: Partial<UserProgress>): Promise<void>;
-  addXp(xp: number): Promise<void>;
-  incrementStreak(): Promise<void>;
+  getProgress(userId?: string): Promise<UserProgress>;
+  updateProgress(updates: Partial<UserProgress>, userId?: string): Promise<void>;
+  addXp(xp: number, userId?: string): Promise<void>;
+  incrementStreak(userId?: string): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -194,4 +194,25 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Import Supabase storage
+import { SupabaseStorage } from "./supabase-storage";
+
+// Use Supabase if configured, otherwise fall back to in-memory storage
+export const storage: IStorage = (() => {
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_ANON_KEY;
+  
+  if (supabaseUrl && supabaseKey && supabaseUrl.trim() && supabaseKey.trim()) {
+    console.log("Using Supabase storage");
+    try {
+      return new SupabaseStorage();
+    } catch (error) {
+      console.error("Failed to initialize Supabase storage:", error);
+      console.log("Falling back to in-memory storage");
+      return new MemStorage();
+    }
+  } else {
+    console.log("Using in-memory storage (Supabase not configured)");
+    return new MemStorage();
+  }
+})();

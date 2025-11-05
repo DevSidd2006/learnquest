@@ -40,7 +40,8 @@ export default function Quiz() {
 
   const submitQuizMutation = useMutation({
     mutationFn: async (data: { sessionId: string; subtopicId: string; score: number }) => {
-      return await apiRequest("POST", "/api/quiz/submit", data);
+      const response = await apiRequest("POST", "/api/quiz/submit", data);
+      return await response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/sessions", sessionId] });
