@@ -49,6 +49,29 @@ Visit `http://localhost:5000` to start learning!
 - **Storage**: In-memory (default) or Supabase PostgreSQL
 - **Build**: Vite, esbuild
 
+## 🚀 Deployment
+
+### Quick Deploy to Vercel
+
+1. **Push to GitHub** (already done!)
+2. **Import to Vercel:**
+   - Go to [vercel.com](https://vercel.com)
+   - Import your GitHub repository
+   - Configure build settings
+3. **Set Environment Variables** in Vercel dashboard
+4. **Deploy!**
+
+📋 **See the complete deployment guide:** [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md)
+
+### Environment Variables Needed
+
+```env
+GEMINI_API_KEY=your_gemini_api_key
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_supabase_anon_key
+JWT_SECRET=your_jwt_secret
+```
+
 ## 📄 License
 
 MIT License - see LICENSE file for details
