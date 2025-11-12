@@ -84,16 +84,26 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Animated gradient background */}
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <div className="gradient-bg-animation absolute inset-0 opacity-30 dark:opacity-20" />
+        <div className="gradient-orb gradient-orb-1" />
+        <div className="gradient-orb gradient-orb-2" />
+        <div className="gradient-orb gradient-orb-3" />
+      </div>
+
       {/* Header */}
-      <header className="border-b bg-background">
+      <header className="border-b bg-background/80 backdrop-blur-xl">
         <div className="container flex h-16 items-center justify-between px-4">
           <Link href="/">
-            <div className="flex items-center gap-2 cursor-pointer">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-                <Brain className="h-6 w-6 text-primary-foreground" />
+            <div className="flex items-center gap-2 cursor-pointer group">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary via-chart-2 to-chart-3 shadow-lg group-hover:scale-110 transition-transform animate-gradient">
+                <Brain className="h-6 w-6 text-white" />
               </div>
-              <span className="text-xl font-bold">LearnQuest</span>
+              <span className="text-xl font-bold bg-gradient-to-r from-primary via-chart-2 to-chart-3 bg-clip-text text-transparent">
+                LearnQuest
+              </span>
             </div>
           </Link>
           <ThemeToggle />
@@ -103,12 +113,12 @@ export default function Login() {
       {/* Main Content */}
       <div className="container px-4 py-12">
         <div className="mx-auto max-w-md">
-          <Card>
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl">
+          <Card className="shadow-2xl border-2 bg-card/95 backdrop-blur-xl animate-fade-in-up">
+            <CardHeader className="text-center space-y-3">
+              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary via-chart-2 to-chart-3 bg-clip-text text-transparent">
                 {isLogin ? "Welcome Back" : "Create Account"}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-base">
                 {isLogin 
                   ? "Sign in to your LearnQuest account" 
                   : "Join LearnQuest and start your learning journey"
@@ -118,11 +128,11 @@ export default function Login() {
             <CardContent className="space-y-6">
               {/* OAuth Buttons */}
               <div className="space-y-3">
-                <Button variant="outline" className="w-full gap-2" disabled>
+                <Button variant="outline" className="w-full gap-2 hover:bg-gradient-to-r hover:from-primary/10 hover:to-chart-2/10 transition-all duration-300" disabled>
                   <Chrome className="h-4 w-4" />
                   Continue with Google
                 </Button>
-                <Button variant="outline" className="w-full gap-2" disabled>
+                <Button variant="outline" className="w-full gap-2 hover:bg-gradient-to-r hover:from-chart-2/10 hover:to-chart-3/10 transition-all duration-300" disabled>
                   <Github className="h-4 w-4" />
                   Continue with GitHub
                 </Button>
@@ -225,7 +235,7 @@ export default function Login() {
 
                 <Button
                   type="submit"
-                  className="w-full gap-2"
+                  className="w-full gap-2 bg-gradient-to-r from-primary via-chart-2 to-chart-3 hover:shadow-xl hover:scale-105 transition-all duration-300 animate-gradient"
                   disabled={authMutation.isPending}
                 >
                   {authMutation.isPending ? (
@@ -246,13 +256,13 @@ export default function Login() {
                 <span className="text-muted-foreground">
                   {isLogin ? "Don't have an account?" : "Already have an account?"}
                 </span>{" "}
-                <Button
-                  variant="link"
-                  className="p-0 h-auto font-semibold"
+                <button
+                  type="button"
+                  className="font-semibold bg-gradient-to-r from-primary via-chart-2 to-chart-3 bg-clip-text text-transparent hover:underline"
                   onClick={() => setIsLogin(!isLogin)}
                 >
                   {isLogin ? "Sign up" : "Sign in"}
-                </Button>
+                </button>
               </div>
 
               {/* Guest Access */}
@@ -260,7 +270,7 @@ export default function Login() {
                 <Button
                   variant="outline"
                   onClick={() => navigate("/")}
-                  className="w-full"
+                  className="w-full hover:bg-gradient-to-r hover:from-accent/50 hover:to-muted/50 transition-all duration-300"
                 >
                   Continue as Guest
                 </Button>

@@ -61,9 +61,17 @@ export default function CreateTopic() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Animated gradient background */}
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <div className="gradient-bg-animation absolute inset-0 opacity-30 dark:opacity-20" />
+        <div className="gradient-orb gradient-orb-1" />
+        <div className="gradient-orb gradient-orb-2" />
+        <div className="gradient-orb gradient-orb-3" />
+      </div>
+
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-4">
             <Button
@@ -71,14 +79,17 @@ export default function CreateTopic() {
               size="icon"
               onClick={() => navigate("/")}
               data-testid="button-back"
+              className="hover:scale-110 transition-transform"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-                <Brain className="h-6 w-6 text-primary-foreground" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary via-chart-2 to-chart-3 shadow-lg animate-gradient">
+                <Brain className="h-6 w-6 text-white" />
               </div>
-              <span className="text-xl font-bold">LearnQuest</span>
+              <span className="text-xl font-bold bg-gradient-to-r from-primary via-chart-2 to-chart-3 bg-clip-text text-transparent">
+                LearnQuest
+              </span>
             </div>
           </div>
           <ThemeToggle />
@@ -89,25 +100,27 @@ export default function CreateTopic() {
       <div className="container px-4 py-12">
         <div className="mx-auto max-w-3xl">
           {/* Page Header */}
-          <div className="text-center space-y-4 mb-12">
-            <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 mb-2">
-              <Sparkles className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium text-primary">AI-Powered</span>
+          <div className="text-center space-y-4 mb-12 animate-fade-in-up">
+            <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary/10 via-chart-2/10 to-chart-3/10 border border-primary/20 px-5 py-2.5 mb-2 backdrop-blur-sm">
+              <Sparkles className="h-4 w-4 text-primary animate-pulse" />
+              <span className="text-sm font-medium bg-gradient-to-r from-primary via-chart-2 to-chart-3 bg-clip-text text-transparent">
+                AI-Powered Learning
+              </span>
             </div>
-            <h1 className="text-4xl font-bold tracking-tight">
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-primary via-chart-2 to-chart-3 bg-clip-text text-transparent">
               What Would You Like to Learn?
             </h1>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Tell us your topic and preferences, and we'll create a personalized learning path just for you
             </p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit}>
-            <Card>
+            <Card className="shadow-2xl border-2 bg-card/95 backdrop-blur-xl animate-fade-in-up animation-delay-200">
               <CardHeader>
-                <CardTitle>Create Your Learning Path</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-2xl">Create Your Learning Path</CardTitle>
+                <CardDescription className="text-base">
                   Customize your learning experience based on your goals
                 </CardDescription>
               </CardHeader>
@@ -134,12 +147,12 @@ export default function CreateTopic() {
                 <div className="space-y-3">
                   <Label className="text-base font-semibold">Difficulty Level</Label>
                   <RadioGroup value={difficulty} onValueChange={setDifficulty}>
-                    <Card className={`cursor-pointer transition-all ${difficulty === 'beginner' ? 'border-primary ring-2 ring-primary' : 'hover-elevate'}`}>
+                    <Card className={`cursor-pointer transition-all hover:scale-[1.02] ${difficulty === 'beginner' ? 'border-2 border-chart-1 bg-gradient-to-br from-chart-1/10 to-chart-1/5 shadow-lg' : 'hover:shadow-md'}`}>
                       <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-4">
                         <RadioGroupItem value="beginner" id="beginner" data-testid="radio-beginner" />
                         <div className="flex items-center gap-3 flex-1">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-chart-1/10">
-                            <Target className="h-5 w-5 text-chart-1" />
+                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-chart-1 to-chart-2 shadow-md">
+                            <Target className="h-6 w-6 text-white" />
                           </div>
                           <div>
                             <Label htmlFor="beginner" className="text-base font-semibold cursor-pointer">
@@ -153,12 +166,12 @@ export default function CreateTopic() {
                       </CardHeader>
                     </Card>
 
-                    <Card className={`cursor-pointer transition-all ${difficulty === 'intermediate' ? 'border-primary ring-2 ring-primary' : 'hover-elevate'}`}>
+                    <Card className={`cursor-pointer transition-all hover:scale-[1.02] ${difficulty === 'intermediate' ? 'border-2 border-chart-2 bg-gradient-to-br from-chart-2/10 to-chart-2/5 shadow-lg' : 'hover:shadow-md'}`}>
                       <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-4">
                         <RadioGroupItem value="intermediate" id="intermediate" data-testid="radio-intermediate" />
                         <div className="flex items-center gap-3 flex-1">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-chart-2/10">
-                            <TrendingUp className="h-5 w-5 text-chart-2" />
+                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-chart-2 to-chart-3 shadow-md">
+                            <TrendingUp className="h-6 w-6 text-white" />
                           </div>
                           <div>
                             <Label htmlFor="intermediate" className="text-base font-semibold cursor-pointer">
@@ -172,12 +185,12 @@ export default function CreateTopic() {
                       </CardHeader>
                     </Card>
 
-                    <Card className={`cursor-pointer transition-all ${difficulty === 'advanced' ? 'border-primary ring-2 ring-primary' : 'hover-elevate'}`}>
+                    <Card className={`cursor-pointer transition-all hover:scale-[1.02] ${difficulty === 'advanced' ? 'border-2 border-chart-3 bg-gradient-to-br from-chart-3/10 to-chart-3/5 shadow-lg' : 'hover:shadow-md'}`}>
                       <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-4">
                         <RadioGroupItem value="advanced" id="advanced" data-testid="radio-advanced" />
                         <div className="flex items-center gap-3 flex-1">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-chart-3/10">
-                            <Zap className="h-5 w-5 text-chart-3" />
+                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-chart-3 to-primary shadow-md">
+                            <Zap className="h-6 w-6 text-white" />
                           </div>
                           <div>
                             <Label htmlFor="advanced" className="text-base font-semibold cursor-pointer">
@@ -230,7 +243,7 @@ export default function CreateTopic() {
                 <Button
                   type="submit"
                   size="lg"
-                  className="w-full gap-2 min-h-12 text-base"
+                  className="w-full gap-2 min-h-14 text-lg font-semibold bg-gradient-to-r from-primary via-chart-2 to-chart-3 hover:shadow-2xl hover:scale-105 transition-all duration-300 animate-gradient"
                   disabled={createSessionMutation.isPending}
                   data-testid="button-generate-outline"
                 >
