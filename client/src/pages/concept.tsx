@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { TextToSpeech } from "@/components/text-to-speech";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { LearningSession, TopicOutline, Explanation } from "@shared/schema";
@@ -149,8 +150,21 @@ export default function Concept() {
               </Badge>
             </div>
             
-            <h1 className="text-4xl font-bold tracking-tight">{currentSubtopic.title}</h1>
-            <p className="text-lg text-muted-foreground">{currentSubtopic.description}</p>
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1">
+                <h1 className="text-4xl font-bold tracking-tight">{currentSubtopic.title}</h1>
+                <p className="text-lg text-muted-foreground mt-2">{currentSubtopic.description}</p>
+              </div>
+              {explanation && (
+                <TextToSpeech 
+                  text={`${currentSubtopic.title}. ${currentSubtopic.description}. ${explanation.simpleExplanation}. ${explanation.analogy}. Real-world examples: ${explanation.realLifeExamples.join('. ')}. Key takeaways: ${explanation.keyTakeaways.join('. ')}`}
+                  variant="default"
+                  size="default"
+                  showLabel={true}
+                  className="bg-gradient-to-r from-primary via-chart-2 to-chart-3 hover:shadow-lg animate-gradient shrink-0"
+                />
+              )}
+            </div>
           </div>
 
           {/* Explanation Content */}
@@ -170,10 +184,17 @@ export default function Concept() {
               {/* Simple Explanation */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Lightbulb className="h-5 w-5 text-chart-4" />
-                    Understanding the Concept
-                  </CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <Lightbulb className="h-5 w-5 text-chart-4" />
+                      Understanding the Concept
+                    </CardTitle>
+                    <TextToSpeech 
+                      text={explanation.simpleExplanation}
+                      variant="ghost"
+                      size="sm"
+                    />
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-base leading-relaxed">{explanation.simpleExplanation}</p>
@@ -183,10 +204,17 @@ export default function Concept() {
               {/* Analogy */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-chart-2" />
-                    Think of it Like This
-                  </CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <Sparkles className="h-5 w-5 text-chart-2" />
+                      Think of it Like This
+                    </CardTitle>
+                    <TextToSpeech 
+                      text={explanation.analogy}
+                      variant="ghost"
+                      size="sm"
+                    />
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-base leading-relaxed italic">{explanation.analogy}</p>
@@ -196,10 +224,17 @@ export default function Concept() {
               {/* Real-Life Examples */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Target className="h-5 w-5 text-chart-1" />
-                    Real-World Examples
-                  </CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <Target className="h-5 w-5 text-chart-1" />
+                      Real-World Examples
+                    </CardTitle>
+                    <TextToSpeech 
+                      text={`Real-world examples: ${explanation.realLifeExamples.join('. ')}`}
+                      variant="ghost"
+                      size="sm"
+                    />
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-3">
@@ -216,10 +251,17 @@ export default function Concept() {
               {/* Key Takeaways */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BookOpen className="h-5 w-5 text-chart-3" />
-                    Key Takeaways
-                  </CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <BookOpen className="h-5 w-5 text-chart-3" />
+                      Key Takeaways
+                    </CardTitle>
+                    <TextToSpeech 
+                      text={`Key takeaways: ${explanation.keyTakeaways.join('. ')}`}
+                      variant="ghost"
+                      size="sm"
+                    />
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2">

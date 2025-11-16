@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { TextToSpeech } from "@/components/text-to-speech";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { LearningSession, TopicOutline } from "@shared/schema";
 import { 
@@ -164,14 +165,21 @@ export default function Session() {
                         
                         <div className="flex-1 space-y-2">
                           <div className="flex items-start justify-between gap-4">
-                            <div className="space-y-1">
+                            <div className="space-y-1 flex-1">
                               <CardTitle className="text-xl">{subtopic.title}</CardTitle>
                               <CardDescription>{subtopic.description}</CardDescription>
                             </div>
-                            <Badge variant="outline" className="shrink-0">
-                              <Clock className="h-3 w-3 mr-1" />
-                              {subtopic.duration}
-                            </Badge>
+                            <div className="flex items-center gap-2 shrink-0">
+                              <TextToSpeech 
+                                text={`${subtopic.title}. ${subtopic.description}`}
+                                variant="ghost"
+                                size="sm"
+                              />
+                              <Badge variant="outline">
+                                <Clock className="h-3 w-3 mr-1" />
+                                {subtopic.duration}
+                              </Badge>
+                            </div>
                           </div>
                           
                           {isCurrent && (
