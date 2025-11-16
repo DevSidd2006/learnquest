@@ -18,7 +18,7 @@ export async function generateSpeechWithGemini(options: TTSOptions): Promise<Buf
   try {
     // Use Gemini 2.0 Flash model with audio generation
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-2.5-flash-exp",
     });
 
     // For now, we'll use a workaround since direct TTS API might not be available
@@ -103,7 +103,7 @@ export async function generateEnhancedSpeech(text: string): Promise<Buffer> {
   try {
     // Step 1: Use Gemini to enhance/optimize the text for speech
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-2.5-flash-exp",
     });
 
     const enhancementPrompt = `Optimize this text for natural speech synthesis. 

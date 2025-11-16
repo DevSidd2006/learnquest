@@ -328,6 +328,101 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Text-to-Speech
+  app.post("/api/tts", async (req, res) => {
+    try {
+      const ttsSchema = z.object({
+        text: z.string().min(1).max(5000),
+        voice: z.string().optional(),
+        speed: z.number().min(0.25).max(4.0).optional(),
+      });
+
+      const validationResult = ttsSchema.safeParse(req.body);
+      
+      if (!validationResult.success) {
+        return res.status(400).json({ error: "Invalid request data", details: validationResult.error });
+      }
+
+      const { text, voice = "en-US-Neural2-D", speed = 0.95 } = validationResult.data;
+
+      console.log(`Generating TTS for text length: ${text.length}`);
+
+      // Check if API key is configured (try TTS-specific key first, then fall back to Gemini key)
+      const apiKey = process.env.GOOGLE_TTS_API_KEY || process.env.GEMINI_API_KEY;
+      
+      if (!apiKey) {
+        return res.status(503).json({ 
+          error: "TTS not configured", 
+          message: "Google Cloud TTS API key is not set. Please configure GOOGLE_TTS_API_KEY or GEMINI_API_KEY in your .env file." 
+        });
+      }
+
+      // Use Google Cloud Text-to-Speech API
+      const apiUrl = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`;
+      
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          input: { text },
+          voice: {
+            languageCode: "en-US",
+            name: voice,
+            ssmlGender: "MALE",
+          },
+          audioConfig: {
+            audioEncoding: "MP3",
+            speakingRate: speed,
+            pitch: 0,
+            volumeGainDb: 0,
+          },
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error("Google TTS API error:", data);
+        
+        // Provide helpful error messages
+        if (data.error?.status === "PERMISSION_DENIED") {
+          return res.status(403).json({ 
+            error: "API key invalid or Text-to-Speech API not enabled", 
+            message: "Please enable the Cloud Text-to-Speech API in Google Cloud Console and ensure your API key has the correct permissions.",
+            details: data.error
+          });
+        }
+        
+        return res.status(response.status).json({ 
+          error: "TTS generation failed", 
+          message: data.error?.message || "Unknown error",
+          details: data.error 
+        });
+      }
+      
+      if (!data.audioContent) {
+        return res.status(500).json({ error: "No audio content received from Google TTS" });
+      }
+
+      console.log(`TTS generated successfully, audio size: ${data.audioContent.length} bytes`);
+
+      // Return the audio as base64
+      res.json({ 
+        audioContent: data.audioContent,
+        format: "mp3"
+      });
+    } catch (error: any) {
+      console.error("TTS API error:", error);
+      res.status(500).json({ 
+        error: "Failed to generate speech", 
+        message: error.message,
+        details: error.toString()
+      });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

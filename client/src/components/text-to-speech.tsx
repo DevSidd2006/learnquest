@@ -80,7 +80,7 @@ export function TextToSpeech({
         },
         body: JSON.stringify({
           text,
-          voice: "en-US-Neural2-J",
+          voice: "en-US-Neural2-D", // Male voice that works well
           speed: 0.95,
         }),
       });
@@ -123,14 +123,23 @@ export function TextToSpeech({
       };
 
       audio.play();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Google TTS error:', error);
       setIsLoading(false);
+      
+      // Show specific error message
+      const errorMessage = error.message || "Failed to generate speech";
+      
       toast({
-        title: "TTS Error",
-        description: "Failed to generate speech. Please try again.",
+        title: "Google TTS Unavailable",
+        description: `${errorMessage}. Falling back to browser TTS.`,
         variant: "destructive",
       });
+      
+      // Fallback to browser TTS
+      setTimeout(() => {
+        handleSpeakWithBrowser();
+      }, 500);
     }
   };
 
