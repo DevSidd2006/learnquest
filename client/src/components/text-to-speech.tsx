@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Volume2, VolumeX, Loader2, Pause } from "lucide-react";
+import { Volume2, VolumeX, Loader2, Pause, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface TextToSpeechProps {
@@ -9,6 +9,7 @@ interface TextToSpeechProps {
   variant?: "default" | "outline" | "ghost" | "secondary";
   size?: "default" | "sm" | "lg" | "icon";
   showLabel?: boolean;
+  useGoogleTTS?: boolean; // Use Google Cloud TTS instead of browser TTS
 }
 
 export function TextToSpeech({ 
@@ -16,12 +17,14 @@ export function TextToSpeech({
   className = "", 
   variant = "outline",
   size = "sm",
-  showLabel = false 
+  showLabel = false,
+  useGoogleTTS = false 
 }: TextToSpeechProps) {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Check if speech synthesis is supported
   const isSpeechSupported = typeof window !== 'undefined' && 'speechSynthesis' in window;
@@ -54,7 +57,84 @@ export function TextToSpeech({
     };
   }, [isSpeechSupported]);
 
-  const handleSpeak = () => {
+  const handleSpeakWithGoogle = async () => {
+    // If already speaking, pause/resume
+    if (isSpeaking && audioRef.current) {
+      if (isPaused) {
+        audioRef.current.play();
+        setIsPaused(false);
+      } else {
+        audioRef.current.pause();
+        setIsPaused(true);
+      }
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/tts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text,
+          voice: "en-US-Neural2-J",
+          speed: 0.95,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate speech');
+      }
+
+      const data = await response.json();
+      
+      // Create audio element from base64
+      const audio = new Audio(`data:audio/mp3;base64,${data.audioContent}`);
+      audioRef.current = audio;
+
+      audio.onplay = () => {
+        setIsLoading(false);
+        setIsSpeaking(true);
+        setIsPaused(false);
+      };
+
+      audio.onpause = () => {
+        setIsPaused(true);
+      };
+
+      audio.onended = () => {
+        setIsSpeaking(false);
+        setIsPaused(false);
+        audioRef.current = null;
+      };
+
+      audio.onerror = () => {
+        setIsLoading(false);
+        setIsSpeaking(false);
+        setIsPaused(false);
+        toast({
+          title: "Audio Error",
+          description: "Failed to play audio. Please try again.",
+          variant: "destructive",
+        });
+      };
+
+      audio.play();
+    } catch (error) {
+      console.error('Google TTS error:', error);
+      setIsLoading(false);
+      toast({
+        title: "TTS Error",
+        description: "Failed to generate speech. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSpeakWithBrowser = () => {
     if (!isSpeechSupported) {
       toast({
         title: "Not Supported",
@@ -85,7 +165,7 @@ export function TextToSpeech({
     const utterance = new SpeechSynthesisUtterance(text);
     
     // Configure voice settings
-    utterance.rate = 0.9; // Slightly slower for better comprehension
+    utterance.rate = 0.9;
     utterance.pitch = 1.0;
     utterance.volume = 1.0;
 
@@ -116,17 +196,30 @@ export function TextToSpeech({
       });
     };
 
-    // Speak
     window.speechSynthesis.speak(utterance);
   };
 
+  const handleSpeak = () => {
+    if (useGoogleTTS) {
+      handleSpeakWithGoogle();
+    } else {
+      handleSpeakWithBrowser();
+    }
+  };
+
   const handleStop = () => {
-    window.speechSynthesis.cancel();
+    if (useGoogleTTS && audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current = null;
+    } else {
+      window.speechSynthesis.cancel();
+    }
     setIsSpeaking(false);
     setIsPaused(false);
   };
 
-  if (!isSpeechSupported) {
+  if (!useGoogleTTS && !isSpeechSupported) {
     return null;
   }
 
@@ -144,11 +237,16 @@ export function TextToSpeech({
           <Loader2 className="h-4 w-4 animate-spin" />
         ) : isSpeaking && !isPaused ? (
           <Pause className="h-4 w-4" />
+        ) : useGoogleTTS ? (
+          <>
+            <Sparkles className="h-4 w-4" />
+            <Volume2 className="h-4 w-4" />
+          </>
         ) : (
           <Volume2 className="h-4 w-4" />
         )}
         {showLabel && (
-          <span>{isSpeaking ? (isPaused ? "Resume" : "Pause") : "Listen"}</span>
+          <span>{isSpeaking ? (isPaused ? "Resume" : "Pause") : useGoogleTTS ? "AI Voice" : "Listen"}</span>
         )}
       </Button>
       

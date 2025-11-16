@@ -161,6 +161,7 @@ export default function Concept() {
                   variant="default"
                   size="default"
                   showLabel={true}
+                  useGoogleTTS={true}
                   className="bg-gradient-to-r from-primary via-chart-2 to-chart-3 hover:shadow-lg animate-gradient shrink-0"
                 />
               )}
